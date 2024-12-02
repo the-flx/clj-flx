@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/License-EPL_2.0-green.svg)](https://opensource.org/licenses/EPL-2.0)
+
 # clj-flx
 > Rewrite emacs-flx in Clojure
 
