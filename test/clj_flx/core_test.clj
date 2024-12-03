@@ -2,6 +2,30 @@
   (:require [clojure.test :refer :all]
             [clj-flx.core :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(deftest word-test-1
+  (testing "Test word 1"
+    (is (= (word-p \c) true))))
+
+(deftest word-test-2
+  (testing "Test word 2"
+    (is (= (word-p \ ) false))))
+
+(deftest capital-test-1
+  (testing "Test capital 1"
+    (is (= (capital-p \C) true))))
+
+(deftest capital-test-2
+  (testing "Test capital 2"
+    (is (= (capital-p \c) false))))
+
+;; (deftest score-test-1
+;;   (testing "Score `switch-to-buffer'"
+;;     (is (= (first (score "switch-to-buffer" "stb")) 237))))
+;;
+;; (deftest score-test-2
+;;   (testing "Score `TestSomeFunctionExterme'"
+;;     (is (= (first (score "TestSomeFunctionExterme" "met")) 57))))
+;;
+;; (deftest score-test-3
+;;   (testing "Score `MetaX_Version'"
+;;     (is (= (first (score "MetaX_Version" "met")) 211))))
