@@ -8,21 +8,21 @@
 
 (defn word-p
   "Check if CHAR is a word character."
-  [^Character char]
-  (not (some #(= char %) word-separators)))
+  [^Character ch]
+  (not (some #(= ch %) word-separators)))
 
 (defn capital-p
   "Check if CHAR is an uppercase character."
-  [char]
-  (and char
-       (word-p char)
-       (= (str char) (str/upper-case char))))
+  [^Character ch]
+  (and ch
+       (word-p ch)
+       (= (str ch) (str/upper-case (str ch)))))
 
 (defn boundary-p
   "Check if LAST-CHAR is the end of a word and CHAR the start of the next.
 
   This function is camel-case aware."
-  [last-char char]
+  [^Character last-char ^Character char]
   (or (not (some? last-char))
       (and (not (capital-p last-char))
            (capital-p char))
@@ -59,21 +59,26 @@
     (loop [res (hash-map)
            index (- str-len 1)]
       (if (<= 0 index)
-        res
-        (let [ch (nth index str)
-              down-char (if (capital-p ch) (str/lower-case ch) ch)]
+        (let [ch (get str index)
+              down-char (if (capital-p ch) (str/lower-case ch) ch)
+              new-index (list index)]
           (recur (if (capital-p ch)
-                   (merge res
-                          { ch index }
-                          { down-char index })
-                   (merge res
-                          { down-char index }))
-                 (dec index)))))))
+                   (let [n-res (assoc-in res [ch]
+                                         (concat new-index (get res ch)))]
+                     (assoc-in n-res [down-char]
+                               (concat new-index (get n-res down-char))))
+                   (assoc-in res [down-char] (concat new-index (get res down-char))))
+                 (dec index)))
+        res))))
 
 (defn score
   "Return best score matching QUERY against STR."
   [^String str ^String query]
   (when-not (or (str/blank? str)
                 (str/blank? query))
-    ;; TODO: ..
-    ))
+    (let [str-info (get-hash-for-string str)
+          query-len (count query)
+          full-match-boost (and (< 1 query-len)
+                                (< query-len 5))]
+      ;; TODO: ..
+      )))
