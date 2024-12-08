@@ -210,8 +210,20 @@
    query-len
    q-index
    match-cache]
-  ;; TODO: ..
-  )
+  (let [hash-key (+ q-index
+                    (* (or greater-than 0)
+                       query-len))
+        hash-val (get match-cache hash-key)]
+    (if hash-val
+      (if (= hash-val 'no-match)
+        nil
+        hash-val)
+      (let [uchar (get query q-index)
+            sorted-list (get str-info uchar)
+            indexes (bigger-sublist sorted-list greater-than)
+            best-score (atom Integer/MIN_VALUE)]
+        ;; TODO: ..
+        ))))
 
 (defn score
   "Return best score matching QUERY against STR."
@@ -222,7 +234,7 @@
           query-len (count query)
           full-match-boost (and (< 1 query-len)
                                 (< query-len 5))
-          match-cache []
+          match-cache (hash-map)
           optimal-match (find-best-match str-info
                                          nil nil
                                          query
