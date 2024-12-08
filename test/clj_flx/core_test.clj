@@ -22,17 +22,6 @@
   (testing "Test inc-vec 1"
     (is (= (inc-vec (list 1 2 3) 1 0 3) (list 2 3 4)))))
 
-;; (let [hm (merge {:check 1}
-;;                 {:hello 2}
-;;                 {:world '(1 2 3)})]
-;;   ;;(get hm :world)
-;;   (assoc-in hm [:world] '(1 2))
-;;   )
-
-(deftest get-hash-for-string-test-1
-  (testing "Test get-hash-for-string 1"
-    (is (= (get-hash-for-string "switch-to-buffer") nil))))
-
 ;; (deftest score-test-1
 ;;   (testing "Score `switch-to-buffer'"
 ;;     (is (= (first (score "switch-to-buffer" "stb")) 237))))
