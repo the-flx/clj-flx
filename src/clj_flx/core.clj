@@ -254,3 +254,7 @@
 
             ;; This is the list of match positions
             (caar optimal-match))))))
+
+
+;; TODO: Remove the following lines.
+(println (score "switch-to-buffer" "stb"))

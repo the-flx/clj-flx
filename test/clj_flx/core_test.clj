@@ -37,14 +37,14 @@
     (is (= (bigger-sublist [1 2 3 4] 2)
            [3 4]))))
 
-;; (deftest score-test-1
-;;   (testing "Score `switch-to-buffer'"
-;;     (is (= (first (score "switch-to-buffer" "stb")) 237))))
-;;
-;; (deftest score-test-2
-;;   (testing "Score `TestSomeFunctionExterme'"
-;;     (is (= (first (score "TestSomeFunctionExterme" "met")) 57))))
-;;
-;; (deftest score-test-3
-;;   (testing "Score `MetaX_Version'"
-;;     (is (= (first (score "MetaX_Version" "met")) 211))))
+(deftest score-test-1
+  (testing "Score `switch-to-buffer'"
+    (is (= (first (score "switch-to-buffer" "stb")) 237))))
+
+(deftest score-test-2
+  (testing "Score `TestSomeFunctionExterme'"
+    (is (= (first (score "TestSomeFunctionExterme" "met")) 57))))
+
+(deftest score-test-3
+  (testing "Score `MetaX_Version'"
+    (is (= (first (score "MetaX_Version" "met")) 211))))
