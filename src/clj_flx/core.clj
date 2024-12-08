@@ -1,5 +1,6 @@
 (ns clj-flx.core
   "Rewrite emacs-flx in Clojure"
+  (:use cadr)
   (:require [clojure.string :as str]))
 
 (def default-score "Default score." -35)
@@ -47,7 +48,7 @@
            _count 0
            _result (list)]
       (if (empty? vec)
-        _result
+        (into [] _result)
         (recur (rest vec)
                (+ _count 1)
                (concat _result (list (if (and (<= _beg _count)
@@ -82,7 +83,7 @@
   (loop [_vec []]
     (if (< (count _vec) length)
       (recur (concat _vec [inital-value]))
-      _vec)))
+      (into [] _vec))))
 
 (defn get-heatmap-str
   "Generate the heatmap vector of string."
@@ -147,10 +148,10 @@
             (reset! base-path-found true)
             (reset! base-path-p true))
 
-          (if base-path-p
+          (if @base-path-p
             ;; ++++ basepath separator-count boosts
             (let [boost (if (> separator-count 1) (- separator-count 1) 0)
-                  penalty (- word-count 0)]
+                  penalty (- 0 word-count)]
               ;; ++++ basepath word count penalty
               (reset! num (+ 35 boost penalty)))
             ;; ++++ non-basepath penalties
@@ -158,24 +159,26 @@
                           -3
                           (+ -5 @index2 -1))))
 
-          (reset! @scores (inc-vec @scores @num
-                                   (+ group-start 1)
-                                   @last-group-limit))
+          (reset! scores (inc-vec @scores @num
+                                  (+ group-start 1)
+                                  @last-group-limit))
 
           (let [cddr-group (rest (rest group))
                 word-index (atom (- words-len 1))
                 last-word (atom (if (nil? @last-group-limit) str-len @last-group-limit))]
             (doseq [word cddr-group]
               ;; ++++  beg word bonus AND
-              (reset! @scores (assoc @scores word (+ (nth @scores word) 85)))
+              (let [new-val (+ (nth @scores word) 85)]
+                (reset! scores (assoc @scores word new-val)))
               (let [index3 (atom word)
                     char-i (atom 0)]
 
                 (while (< @index3 @last-word)
-                  (reset! @scores (assoc @scores @index3
-                                         (+ (nth @scores @index3)
-                                            (- (* @word-index -3)  ; ++++ word order penalty
-                                               @char-i)))) ; ++++ char order penalty
+                  (let [current-val (nth @scores @index3)
+                        new-val (+ current-val
+                                   (- (* @word-index -3)  ; ++++ word order penalty
+                                      @char-i))]  ; ++++ char order penalty
+                    (reset! scores (assoc @scores @index3 new-val)))
                   (swap! char-i inc)
                   (swap! index3 inc))
                 (reset! last-word word)
@@ -184,20 +187,31 @@
             (swap! index2 dec)))))
     @scores))
 
-(println (get-heatmap-str "switch-to-buffer" nil))
+(defn bigger-sublist
+  "Return sublist bigger than VAL from sorted SORTED-LIST.
 
-(let [group-alist (atom (vector (vector -1 0)))
-      group-word-count 45
-      index1 10]
-  (println @group-alist)
-  (reset! group-alist
-          (assoc @group-alist 0 (assoc (nth @group-alist 0) 1 group-word-count)))
-  (println @group-alist)
-  ;;(reset! group-alist (concat [[index1 group-word-count]] @group-alist))
-  @group-alist)
+  If VAL is nil, return entire list."
+  [sorted-list val]
+  (if val
+    (let [result (atom (list))]
+      (doseq [sub sorted-list]
+        (when (> sub val)
+          (reset! result (concat @result (list sub)))))
+      (into [] @result))
+    sorted-list))
 
-(assoc [1 2 3] 0 5)
-(nth  [1 2 3] 0)
+(defn find-best-match
+  "Recursively compute the best match for a string, passed as STR-INFO and
+  HEATMAP, according to QUERY."
+  [str-info
+   heatmap
+   greater-than
+   query
+   query-len
+   q-index
+   match-cache]
+  ;; TODO: ..
+  )
 
 (defn score
   "Return best score matching QUERY against STR."
@@ -207,6 +221,24 @@
     (let [str-info (get-hash-for-string str)
           query-len (count query)
           full-match-boost (and (< 1 query-len)
-                                (< query-len 5))]
-      ;; TODO: ..
-      )))
+                                (< query-len 5))
+          match-cache []
+          optimal-match (find-best-match str-info
+                                         nil nil
+                                         query
+                                         query-len
+                                         0
+                                         match-cache)]
+      ;; Postprocess candidate
+      (and optimal-match
+           (cons
+            ;; This is the computed score, adjusted to boost the scores
+            ;; of exact matches.
+            (if (and full-match-boost
+                     (= (count (caar optimal-match))
+                        (count str)))
+              (+ (cadar optimal-match) 10000)
+              (cadar optimal-match))
+
+            ;; This is the list of match positions
+            (caar optimal-match))))))
