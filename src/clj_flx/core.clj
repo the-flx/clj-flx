@@ -66,7 +66,9 @@
            index (- str-len 1)]
       (if (<= 0 index)
         (let [ch (get str index)
-              down-char (if (capital-p ch) (str/lower-case ch) ch)
+              down-char (if (capital-p ch)
+                          (first (char-array (str/lower-case ch)))
+                          ch)
               new-index (list index)]
           (recur (if (capital-p ch)
                    (let [n-res (assoc-in res [ch]
@@ -241,7 +243,6 @@
                                           query-len
                                           (+ q-index 1)
                                           @_match-cache)]
-              (println (cddr elem))
               (reset! temp-score
                       (if (= (- (caar elem) 1) index)
                         (+ (cadr elem)
@@ -300,4 +301,5 @@
 
 ;; TODO: Remove the following lines.
 ;;(println (score "switch-to-buffer" "stb"))
-(println (score "MetaX_Version" "Met"))
+(println (score "MetaX_Version" "met"))
+;;(println (score "TestSomeFunctionExterme" "met"))
