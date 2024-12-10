@@ -3,11 +3,11 @@
 # clj-flx
 > Rewrite emacs-flx in Clojure
 
-A Clojure library designed to ... well, that part is up to you.
-
 ## 🔨 Usage
 
-FIXME
+```clojure
+(score "switch-to-buffer" "stb")  ; (237 0 7 10)
+```
 
 ## ⚜️ License
 
