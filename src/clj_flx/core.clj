@@ -213,7 +213,8 @@
   (let [hash-key (+ q-index
                     (* (or greater-than 0)
                        query-len))
-        hash-val (get match-cache hash-key)]
+        hash-val (get match-cache hash-key)
+        _match-cache (atom match-cache)]
     (if hash-val
       (if (= hash-val 'no-match)
         nil
@@ -221,9 +222,49 @@
       (let [uchar (get query q-index)
             sorted-list (get str-info uchar)
             indexes (bigger-sublist sorted-list greater-than)
+            match (atom nil)
+            temp-score (atom nil)
             best-score (atom Integer/MIN_VALUE)]
-        ;; TODO: ..
-        ))))
+        (if (>= q-index (- query-len 1))
+          ;; At the tail end of the recursion, simply
+          ;; generate all possible matches with their scores
+          ;; and return the list to parent.
+          (reset! match (map (fn [index]
+                               (cons (list index)
+                                     (cons (get heatmap index) (list 0))))
+                             indexes))
+          (doseq [index indexes]
+            (doseq [elem (find-best-match str-info
+                                          heatmap
+                                          index
+                                          query
+                                          query-len
+                                          (+ q-index 1)
+                                          @_match-cache)]
+              (println (cddr elem))
+              (reset! temp-score
+                      (if (= (- (caar elem) 1) index)
+                        (+ (cadr elem)
+                           (get heatmap index)
+                           ;; boost contiguous matches
+                           (* (min (caddr elem) 3)
+                              15)
+                           60)
+                        (+ (cadr elem)
+                           (get heatmap index))))
+              ;; We only care about the optimal match, so only
+              ;; forward the match with the best score to parent
+              (when (> @temp-score @best-score)
+                (reset! best-score @temp-score)
+                (reset! match (list (cons (cons index (car elem))
+                                          (cons @temp-score
+                                                (list (if (= (- (caar elem) 1) index)
+                                                        (+ (caddr elem) 1)
+                                                        0))))))))))
+        ;; Calls are cached to avoid exponential time complexity
+        (reset! _match-cache (concat @_match-cache
+                                     (hash-map hash-key (or @match 'no-match))))
+        @match))))
 
 (defn score
   "Return best score matching QUERY against STR."
@@ -231,12 +272,14 @@
   (when-not (or (str/blank? str)
                 (str/blank? query))
     (let [str-info (get-hash-for-string str)
+          heatmap (get-heatmap-str str nil)
           query-len (count query)
           full-match-boost (and (< 1 query-len)
                                 (< query-len 5))
           match-cache (hash-map)
           optimal-match (find-best-match str-info
-                                         nil nil
+                                         heatmap
+                                         nil
                                          query
                                          query-len
                                          0
@@ -255,6 +298,6 @@
             ;; This is the list of match positions
             (caar optimal-match))))))
 
-
 ;; TODO: Remove the following lines.
-(println (score "switch-to-buffer" "stb"))
+;;(println (score "switch-to-buffer" "stb"))
+(println (score "MetaX_Version" "Met"))

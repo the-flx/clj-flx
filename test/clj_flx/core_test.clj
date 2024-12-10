@@ -27,6 +27,11 @@
     (is (= (get-heatmap-str "switch-to-buffer" nil)
            [82 -4 -5 -6 -7 -8 -9 79 -7 -8 76 -10 -11 -12 -13 -13]))))
 
+(deftest get-heatmap-str-test-2
+  (testing "Test get-heatmap-str 2"
+    (is (= (get-heatmap-str "MetaX_Version" nil)
+           [83 -3 -4 -5 80 -6 77 -9 -10 -11 -12 -13 -13]))))
+
 (deftest bigger-sublist-test-1
   (testing "Test bigger-sublist 1"
     (is (= (bigger-sublist [1 2 3 4] nil)
