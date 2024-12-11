@@ -5,6 +5,8 @@
 # clj-flx
 > Rewrite emacs-flx in Clojure
 
+[![CI](https://github.com/the-flx/clj-flx/actions/workflows/test.yml/badge.svg)](https://github.com/the-flx/clj-flx/actions/workflows/test.yml)
+
 ## 🔨 Usage
 
 ```clojure
