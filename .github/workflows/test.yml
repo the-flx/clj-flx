@@ -33,7 +33,14 @@ jobs:
 
     - uses: actions/checkout@v4
 
-    - name: Run tests
+    - name: Run tests (Unix)
+      if: runner.os != 'Windows'
+      run: |
+        lein uberjar
+        lein test
+
+    - name: Run tests (Windows)
+      if: runner.os == 'Windows'
       shell: cmd
       run: |
         lein uberjar
