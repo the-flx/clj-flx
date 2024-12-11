@@ -34,5 +34,6 @@ jobs:
         lein: 2.11.2
 
     - name: Run tests
-      run:
+      run: |
+        lein uberjar
         lein test
