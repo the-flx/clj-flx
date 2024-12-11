@@ -1,4 +1,4 @@
-(defproject clj-flx "0.1.0"
+(defproject com.github.jcs090218/clj-flx "0.1.0"
   :description "Rewrite emacs-flx in Clojure"
   :url "https://github.com/the-flx/clj-flx"
   :license {:name "EPL-2.0"
