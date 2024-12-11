@@ -1,4 +1,6 @@
 [![License](https://img.shields.io/badge/License-EPL_2.0-green.svg)](https://opensource.org/licenses/EPL-2.0)
+[![Release](https://img.shields.io/github/tag/the-flx/clj-flx.svg?label=release&logo=github)](https://github.com/the-flx/clj-flx/releases/latest)
+[![Clojars Project](https://img.shields.io/clojars/v/com.github.jcs090218/clj-flx.svg)](https://clojars.org/com.github.jcs090218/clj-flx)
 
 # clj-flx
 > Rewrite emacs-flx in Clojure
