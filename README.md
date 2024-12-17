@@ -13,6 +13,14 @@
 (score "switch-to-buffer" "stb")  ; (237 0 7 10)
 ```
 
+## 🛠 Development
+
+To run tests, we use [Leiningen][]:
+
+```sh
+$ lein test
+```
+
 ## ⚜️ License
 
 Copyright © 2024 Jen-Chieh Shen
@@ -29,3 +37,7 @@ option) any later version, with the GNU Classpath Exception which is available
 at https://www.gnu.org/software/classpath/license.html.
 
 See [`LICENSE`](./LICENSE) for details.
+
+<!-- Links -->
+
+[Leiningen]: https://leiningen.org/
