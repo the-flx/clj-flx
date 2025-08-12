@@ -31,7 +31,7 @@ jobs:
       with:
         lein: 2.11.2
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Run tests (Unix)
       if: runner.os != 'Windows'
